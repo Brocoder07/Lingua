@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 fun LoginPage(
     modifier: Modifier = Modifier,
     navController: NavController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(RetrofitClient.instance))
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
