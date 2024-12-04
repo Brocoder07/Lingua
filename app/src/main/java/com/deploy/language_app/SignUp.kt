@@ -41,7 +41,7 @@ fun SignUp(
 
     LaunchedEffect(authState) {
         when(authState) {
-            is AuthState.Authenticated -> navController.navigate("home")
+            is AuthState.Authenticated -> navController.navigate("login")
             is AuthState.Error -> Toast.makeText(
                 context,
                 (authState as AuthState.Error).message,
