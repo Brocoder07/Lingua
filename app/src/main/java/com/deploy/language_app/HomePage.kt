@@ -19,15 +19,12 @@ import androidx.navigation.NavHostController
 
 @Composable
 /* HomePage function displays the main screen after login,allowing the user to
-select a language and navigate further.Includes a sign-out option to navigate back to welcome screen. */
+continue to the chatbot. Includes a sign-out option to navigate back to welcome screen. */
 fun HomePage(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     authViewModel: AuthViewModel = viewModel()
 ) {
-    var expanded by remember { mutableStateOf(false) }//State variable to manage dropdown menu visibility
-    var selectedLanguage by remember { mutableStateOf("Select a language") }//State variable to hold selected language
-    val languages = listOf("English", "Spanish", "Mandarin", "French", "German", "Japanese", "Russian", "Hindi")//List of languages to be displayed in the dropdown menu
     //Main container that fills the entire screen and applies a vertical gradient background
     Box(
         modifier = Modifier
@@ -49,51 +46,23 @@ fun HomePage(
         ) {
             //Main title text for the HomePage
             Text(
-                "Explore Languages",
+                "Welcome!",
                 fontSize = 28.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(16.dp))
-            //Subtitle text providing instruction to the user
+            //Subtitle text providing a greeting to the user
             Text(
-                "Select a language to start learning",
+                "You are successfully logged in.",
                 fontSize = 16.sp,
                 color = Color.White,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            //Dropdown Menu
-            Box(modifier = Modifier.fillMaxWidth(0.8f)) {
-                OutlinedButton(
-                    onClick = { expanded = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(selectedLanguage, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                ) {
-                    languages.forEach { language ->
-                        DropdownMenuItem(
-                            text = { Text(language, fontSize = 16.sp) },
-                            onClick = {
-                                selectedLanguage = language
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+            //Continue Button
             Button(
-                onClick = {/* Navigate to Chatbot */},
+                onClick = { navController.navigate("chat") }, //Navigate to the Chatbot screen
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
@@ -101,7 +70,12 @@ fun HomePage(
                     .height(52.dp)
                     .shadow(10.dp, RoundedCornerShape(24.dp))
             ) {
-                Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF3366FF))
+                Text(
+                    "Continue",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF3366FF)
+                )
             }
             Spacer(modifier = Modifier.height(24.dp))
             //Sign-out Button
@@ -121,7 +95,12 @@ fun HomePage(
                     .padding(horizontal = 20.dp)
                     .shadow(10.dp, RoundedCornerShape(24.dp))
             ) {
-                Text("Sign Out", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                Text(
+                    "Sign Out",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
             }
         }
     }
