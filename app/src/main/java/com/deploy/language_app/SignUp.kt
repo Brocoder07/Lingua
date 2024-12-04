@@ -21,15 +21,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.deploy.language_app.api.RetrofitClient
 
 @Composable
 fun SignUp(
     modifier: Modifier = Modifier,
     navController: NavController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(RetrofitClient.instance))
 ) {
     var email by remember { mutableStateOf("") }
+    val backendApi = RetrofitClient.instance
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
