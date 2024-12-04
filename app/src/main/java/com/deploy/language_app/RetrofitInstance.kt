@@ -1,6 +1,6 @@
 package com.deploy.language_app.api
 
-import com.deploy.language_app.BackendApi
+import com.deploy.language_app.api.BackendApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

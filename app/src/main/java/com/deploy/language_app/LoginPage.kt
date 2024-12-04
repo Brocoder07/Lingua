@@ -30,7 +30,7 @@ import com.deploy.language_app.api.RetrofitClient
 fun LoginPage(
     modifier: Modifier = Modifier,
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(RetrofitClient.instance))
+    authViewModel: AuthViewModel
 ) {
     var email by remember { mutableStateOf("") }
     val backendApi = RetrofitClient.instance

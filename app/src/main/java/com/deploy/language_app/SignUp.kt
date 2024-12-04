@@ -29,7 +29,7 @@ import com.deploy.language_app.api.RetrofitClient
 fun SignUp(
     modifier: Modifier = Modifier,
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(RetrofitClient.instance))
+    authViewModel: AuthViewModel
 ) {
     var email by remember { mutableStateOf("") }
     val backendApi = RetrofitClient.instance
@@ -54,7 +54,7 @@ fun SignUp(
         return password.length >= 8 &&
                 password.any { it.isDigit() } &&
                 password.any { it.isUpperCase() } &&
-                password.any { !it.isLetterOrDigit() }
+                password.any { it.isLetterOrDigit() }
     }
     Box(
         modifier = Modifier

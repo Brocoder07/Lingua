@@ -81,7 +81,7 @@ fun HomePage(
             //Sign-out Button
             OutlinedButton(
                 onClick = {
-                    authViewModel.signout()
+                    authViewModel.signOut()
                     navController.navigate("welcome") {
                         popUpTo("home") { inclusive = true } //Clear backstack to avoid returning to Home
                     }
