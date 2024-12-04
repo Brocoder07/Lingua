@@ -33,6 +33,13 @@ fun Navigator(modifier: Modifier = Modifier, authViewModel: AuthViewModel = view
         composable("home") {
             HomePage(modifier, navController,authViewModel) //Home screen
         }
+        composable("chat") {
+            ChatScreen(navController = navController)
+        }
+        composable("chat_detail/{chatId}") { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            ChatDetailScreen(chatId = chatId)
+        }
     }
     //Redirect to home if the user is authenticated after login/signup
     LaunchedEffect(authState) {
