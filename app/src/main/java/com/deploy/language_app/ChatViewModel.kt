@@ -1,34 +1,23 @@
 package com.deploy.language_app
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
+data class Chat(
+    val id: String,
+    val language: String = "",
+    val level: String = "",
+    val messages: MutableList<String> = mutableListOf()
+)
 //ViewModel to manage chats
 class ChatViewModel : ViewModel() {
-    var chatHistory by mutableStateOf(listOf<Chat>())
+    var chatHistory = mutableStateListOf<Chat>()
         private set
-    fun getChat(chatId: String): Chat? = chatHistory.find { it.id == chatId }
-}
-data class Chat(val id: String, val messages: MutableList<String> = mutableListOf())
-@Composable
-fun ChatDetailScreen(chatId: String, chatViewModel: ChatViewModel = viewModel()) {
-    val chat = chatViewModel.getChat(chatId)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = chat?.id ?: "Chat Not Found",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
+    fun addChat(chat: Chat){
+        chatHistory.add(chat)
     }
+    fun deleteChat(chat: Chat) {
+        chatHistory.remove(chat)
+    }
+    fun getChat(chatId: String): Chat? = chatHistory.find { it.id == chatId }
 }
