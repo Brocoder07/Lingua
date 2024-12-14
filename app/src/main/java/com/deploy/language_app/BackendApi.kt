@@ -10,6 +10,15 @@ data class User(
     val is_active: Boolean
 )
 
+data class UserGet(
+    val _id: String,
+    val firebase_uid: String,
+    val email: String,
+    val languages : List<String>,
+    val created_at: String,
+    val is_active: Boolean
+)
+
 data class UserUpdate(
     val firebase_uid: String?,
     val email: String?,
@@ -22,10 +31,20 @@ data class Message(
     val content: String,
     val role: String,
     val timestamp: String,
-    val language: String
+    val language: String,
 )
 
 data class Chat(
+    val _id: String?,
+    val user_id: String,
+    val language: String,
+    val level: String,
+    val title: String,
+    val messages: List<Message>,
+    val is_active: Boolean
+)
+
+data class ChatPost(
     val user_id: String,
     val language: String,
     val level: String,
@@ -56,12 +75,26 @@ data class Test(
     val results: Map<String, String>?
 )
 
+data class Response(
+    val response: String,
+    val progress: Progress
+)
+
+data class Progress(
+    val user_id: String,
+    val language: String,
+    val last_interaction: String,
+    val level: String,
+    val messages_sent: Int,
+    val xp_points: Int
+)
+
 interface BackendApi {
     @POST("/users")
     suspend fun registerUser(@Body user: User): Map<String, String>
 
     @GET("/users/{firebase_uid}")
-    suspend fun getUserProfile(@Path("firebase_uid") firebase_uid: String): User
+    suspend fun getUserProfile(@Path("firebase_uid") firebase_uid: String): UserGet
 
     @PUT("/users/{firebase_uid}")
     suspend fun updateUserProfile(
@@ -70,10 +103,10 @@ interface BackendApi {
     ): User
 
     @POST("/chats/create")
-    suspend fun createChat(@Body chat: Chat): Map<String, String>
+    suspend fun createChat(@Query("user_id") user_id: String, @Query("language") language: String, @Query("initial_message") title: String, @Query("level") level: String): Chat
 
     @POST("/chats/{chat_id}/message")
-    suspend fun sendMessage(@Path("chat_id") chatId: String, @Body message: Message): Map<String, String>
+    suspend fun sendMessage(@Path("chat_id") chatId: String, @Body updateData: Message): Response
 
     @GET("/chats/user/{user_id}")
     suspend fun getChatsByUser(@Path("user_id") userId: String): ChatList

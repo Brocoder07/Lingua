@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.deploy.language_app.api.Chat
 import com.google.gson.Gson
 
 @Composable
@@ -37,21 +38,23 @@ fun Navigator(
             HomePage(modifier, navController, authViewModel)
         }
         composable("chat") {
-            ChatHistoryScreen(navController = navController, chatViewModel = chatViewModel)
+            ChatHistoryScreen(navController = navController, chatViewModel = chatViewModel, authViewModel = authViewModel)
         }
         composable("chat_detail/{chatId}") { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
-            ChatDetailScreen(chatId = chatId, chatViewModel = chatViewModel, navController = navController)
+            ChatDetailScreen(chatId = chatId, chatViewModel = chatViewModel, authViewModel = authViewModel, navController = navController)
         }
         composable("language_selection") {
-            LanguageSelectionScreen(navController = navController) { language, level ->
+            LanguageSelectionScreen(navController = navController) { language, level, title ->
                 //Pass selected language and level to the new chat
-                val newChat = Chat(
-                    id = "Chat ${chatViewModel.chatHistory.size + 1}",
-                    language = language,
-                    level = level
-                )
-                chatViewModel.addChat(newChat)
+                val newChat = authViewModel.userData.value?.let { it1 ->
+                    chatViewModel.createChat(
+                        userId = it1.user_id,
+                        language = language,
+                        level = level,
+                        title = title,
+                    )
+                }
             }
         }
         composable("preparing_class") {

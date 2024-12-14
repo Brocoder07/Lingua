@@ -16,10 +16,11 @@ import androidx.navigation.NavHostController
 @Composable
 fun LanguageSelectionScreen(
     navController: NavHostController,
-    onSelectionComplete: (String, String) -> Unit
+    onSelectionComplete: (String, String, String) -> Unit
 ) {
     var selectedLanguage by remember { mutableStateOf("") }
     var selectedLevel by remember { mutableStateOf("") }
+    var userInput by remember { mutableStateOf("") }
     var isLanguageDropdownExpanded by remember { mutableStateOf(false) }
     var isLevelDropdownExpanded by remember { mutableStateOf(false) }
     val languages = listOf("English", "Spanish", "French", "German", "Mandarin", "Hindi", "Japanese")
@@ -100,11 +101,19 @@ fun LanguageSelectionScreen(
                         }
                     }
                 }
+                Box {
+                    TextField(
+                        value = userInput,
+                        onValueChange = { userInput = it },
+                        label = { Text("Enter a Topic for the chat") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
                 //Submit Button
                 Button(
                     onClick = {
                         if (selectedLanguage.isNotEmpty() && selectedLevel.isNotEmpty()) {
-                            onSelectionComplete(selectedLanguage, selectedLevel)
+                            onSelectionComplete(selectedLanguage, selectedLevel, userInput)
                             navController.navigate("preparing_class")
                         }
                     },

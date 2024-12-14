@@ -14,6 +14,7 @@ import com.deploy.language_app.api.BackendApi
 import com.deploy.language_app.api.RetrofitClient
 import com.deploy.language_app.api.User
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -26,6 +27,8 @@ class AuthViewModel : ViewModel() {
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
     private val apiInstance: BackendApi = RetrofitClient.instance
+    private val _userData = MutableLiveData<UserData>()
+    val userData: LiveData<UserData> = _userData
 
     //Initialization block to check the authentication status when the ViewModel is created
     init {
@@ -38,6 +41,11 @@ class AuthViewModel : ViewModel() {
             _authState.value = AuthState.Unauthenticated
         } else {
             _authState.value = AuthState.Authenticated
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                val currentUserFirebaseId = currentUser.uid
+                getUserData(currentUserFirebaseId)
+            }
         }
     }
     //Function to validate that only specific email domains can log in or sign up
@@ -74,6 +82,18 @@ class AuthViewModel : ViewModel() {
                 val returnedUser = apiInstance.getUserProfile(
                     firebase_uid = firebaseUid
                 )
+                val userData = UserData(
+                    user_id = returnedUser._id,
+                    firebase_uid = returnedUser.firebase_uid,
+                    email = returnedUser.email,
+                    languages = returnedUser.languages,
+                    created_at = returnedUser.created_at,
+                    is_active = returnedUser.is_active
+                )
+                withContext(Dispatchers.Main){
+                    _userData.value = userData
+                    Log.d("AuthViewModel", "User data got successfully: ${userData.user_id}")
+                }
                 Log.d("AuthViewModel", "User data got successfully: ")
             } catch (e: HttpException) {
                 Log.e("AuthViewModel", "Error sending user data: ${e.message()}")
@@ -103,6 +123,11 @@ class AuthViewModel : ViewModel() {
                 //If sign-in is successful, set state to authenticated
                 if (task.isSuccessful) {
                     _authState.value = AuthState.Authenticated
+                    val currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        val currentUserFirebaseId = currentUser.uid
+                        getUserData(currentUserFirebaseId)
+                    }
                 } else {
                     //If sign-in fails, set an error message
                     _authState.value = AuthState.Error(task.exception?.message ?: "Something went wrong")
@@ -163,3 +188,12 @@ sealed class AuthState {
     //Represents an error state with an error message
     data class Error(val message: String) : AuthState()
 }
+
+data class UserData (
+    val user_id: String,
+    val firebase_uid: String,
+    val email: String,
+    val languages : List<String>,
+    val created_at: String,
+    val is_active: Boolean,
+)
