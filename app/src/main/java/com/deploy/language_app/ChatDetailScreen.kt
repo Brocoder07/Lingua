@@ -1,6 +1,5 @@
 package com.deploy.language_app
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,13 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.deploy.language_app.api.Chat
 import com.deploy.language_app.api.Message
-import com.google.gson.Gson
 import java.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,38 +74,50 @@ fun ChatDetailScreen(
                     }
                 }
                 //Floating Action Button for Test
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate("mcq_test/${chatId}")
-                    },
+                Box(
                     modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(bottom = 8.dp)
+                        .fillMaxWidth()
+                        .padding(bottom = 5.dp), //Reduce bottom padding
+                    contentAlignment = Alignment.BottomEnd
                 ) {
-                    Text("Test")
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate("mcq_test/$chatId")
+                        },
+                        modifier = Modifier.padding(end = 2.dp, bottom = 8.dp) //Minimal bottom padding
+                    ) {
+                        Text("Test")
+                    }
                 }
                 //Message input and send button
-                Row(
-                    modifier = Modifier.fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.BottomCenter
                 ) {
-                    BasicTextField(
-                        value = messageInput,
-                        onValueChange = { messageInput = it },
-                        modifier = Modifier
-                            .weight(2f)
-                            .background(Color.LightGray, MaterialTheme.shapes.small)
-                            .padding(7.dp)
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Button(onClick = {
-                        if (messageInput.isNotEmpty()) {
-                            val message = Message(messageInput, "user", Instant.now().toString(), "English")
-                            messageHistory.add(message)
-                            authViewModel.userData.value?.let { chatViewModel.sendMessage(message, chatId, it.user_id) }
-                            messageInput = ""
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BasicTextField(
+                            value = messageInput,
+                            onValueChange = { messageInput = it },
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(Color.LightGray, MaterialTheme.shapes.small)
+                                .padding(7.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(onClick = {
+                            if (messageInput.isNotEmpty()) {
+                                val message = Message(messageInput, "user", Instant.now().toString(), "English")
+                                messageHistory.add(message)
+                                authViewModel.userData.value?.let { chatViewModel.sendMessage(message, chatId, it.user_id) }
+                                messageInput = ""
+                            }
+                        }) {
+                            Icon(Icons.Default.Send, contentDescription = "Send")
                         }
-                    }) {
-                        Icon(Icons.Default.Send, contentDescription = "Send")
                     }
                 }
             }
@@ -118,7 +127,6 @@ fun ChatDetailScreen(
 @Composable
 fun MessageItem(message: Message) {
     val isUserMessage = message.role == "user"
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
