@@ -11,8 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.deploy.language_app.api.Chat
-import com.google.gson.Gson
 
 @Composable
 fun Navigator(
@@ -61,26 +59,27 @@ fun Navigator(
             PreparingClassScreen(navController = navController)
         }
         composable(
-            "mcq_test/{questions}/{answers}",
+            "mcq_test/{chatId}",
             arguments = listOf(
-                navArgument("questions") { type = NavType.StringType },
-                navArgument("answers") { type = NavType.StringType }
+                navArgument("chatId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val questionsJson = backStackEntry.arguments?.getString("questions")
-            val answersJson = backStackEntry.arguments?.getString("answers")
-
-            val questions = Gson().fromJson(questionsJson, Array<String>::class.java).toList()
-            val answers = Gson().fromJson(answersJson, Array<Array<String>>::class.java).map { it.toList() }
-
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
             MCQTestScreen(
                 navController = navController,
-                questions = questions,
-                answers = answers,
-                onSubmit = { selectedAnswers ->
-                    //Handling submitted answers
-                }
+                chatId = chatId,
+                chatViewModel = chatViewModel,
+                authViewModel = authViewModel
             )
+        }
+        composable(
+            "test_result/{score}",
+            arguments = listOf(
+                navArgument("score") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val score = backStackEntry.arguments?.getString("score") ?: "0"
+            TestResultScreen(navController = navController, score = score)
         }
     }
     LaunchedEffect(authState) {
