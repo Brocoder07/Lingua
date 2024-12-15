@@ -57,7 +57,7 @@ data class ChatList(
     val chats: List<Chat>
 )
 
-data class Question(
+data class Question (
     val question: String,
     val options: List<String>,
     val correct_answer: String,
@@ -66,7 +66,12 @@ data class Question(
     val difficulty: String
 )
 
-data class Test(
+data class TestReturned (
+    val test_id: String,
+    val test: Test
+)
+
+data class Test (
     val user_id: String,
     val chat_id: String,
     val questions: List<Question>,
@@ -78,6 +83,12 @@ data class Test(
 data class Response(
     val response: String,
     val progress: Progress
+)
+
+data class Result (
+    val score: Int,
+    val correct: Int,
+    val incorrect: Int,
 )
 
 data class Progress(
@@ -112,10 +123,10 @@ interface BackendApi {
     suspend fun getChatsByUser(@Path("user_id") userId: String): ChatList
 
     @POST("/chats/{chat_id}/generate-test")
-    suspend fun generateTest(@Path("chat_id") chatId: String): Map<String, String>
+    suspend fun generateTest(@Path("chat_id") chatId: String): TestReturned
 
     @GET("/tests/{test_id}/submit")
-    suspend fun submitTest(@Path("test_id") testId: String): Map<String, String>
+    suspend fun submitTest(@Path("test_id") testId: String, results: Map<String, String>): Map<String, String>
 
     @GET("/users/user_id/tests")
     suspend fun getTestsByUser(@Path("user_id") userId: String): Map<String, String>

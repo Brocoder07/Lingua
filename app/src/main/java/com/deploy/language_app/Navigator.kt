@@ -73,14 +73,19 @@ fun Navigator(
             )
         }
         composable(
-            "test_result/{score}",
+            "test_result/{chatId}/{score}/{numQuestions}",
             arguments = listOf(
-                navArgument("score") { type = NavType.StringType }
+                navArgument("chatId") { type = NavType.StringType},
+                navArgument("score") { type = NavType.IntType },
+                navArgument("numQuestions") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val score = backStackEntry.arguments?.getString("score") ?: "0"
-            TestResultScreen(navController = navController, score = score)
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val score = backStackEntry.arguments?.getInt("score") ?: 0
+            val numQuestions = backStackEntry.arguments?.getInt("numQuestions") ?: 0
+            TestResultScreen(navController = navController, chatId = chatId,score = score, numQuestions = numQuestions)
         }
+
     }
     LaunchedEffect(authState) {
         if (authState is AuthState.Authenticated) {

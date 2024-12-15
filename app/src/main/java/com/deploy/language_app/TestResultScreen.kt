@@ -19,10 +19,13 @@ import androidx.navigation.NavHostController
 @Composable
 fun TestResultScreen(
     navController: NavHostController,
-    score: String
+    chatId: String,
+    score: Int,
+    numQuestions : Int
 ) {
-    val scoreInt = score.toIntOrNull() ?: 0
-    val percentage = (scoreInt * 20).toFloat() //Each question 20% score
+    val scoreF = score.toFloat()
+    val numQuestionsF = numQuestions.toFloat()
+    val percentage = ((scoreF/numQuestionsF)* 100)//Each question 20% score
     val resultMessage = when {
         percentage == 100f -> "Excellent! Perfect score!"
         percentage >= 80f -> "Great job! You're doing well!"
@@ -66,7 +69,7 @@ fun TestResultScreen(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Text(
-                    text = "$scoreInt/5",
+                    text = "$score/$numQuestions",
                     color = Color.White,
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
@@ -86,7 +89,7 @@ fun TestResultScreen(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Button(
-                    onClick = { navController.navigateUp() },
+                    onClick = { navController.popBackStack("chat_detail/$chatId", inclusive = false) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color(0xFF3366FF)

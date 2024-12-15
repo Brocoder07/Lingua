@@ -34,14 +34,16 @@ fun MCQTestScreen(
     var selectedAnswers by remember { mutableStateOf(mutableMapOf<Int, String>()) }
     var isLoading by remember { mutableStateOf(true) }
     var testId by remember { mutableStateOf("") }
+    var score by remember { mutableStateOf(0) }
 
     //Generate test when screen loads
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
-                val response = apiInstance.generateTest(chatId)
-                testId = response["test_id"] ?: ""
-                Log.d("MCQTestScreen", "Generated Test ID: $testId")
+                val testReturn = apiInstance.generateTest(chatId)
+                Log.d("MCQTestScreen", "Generated Test: $testReturn")
+                Log.d("MCQTestScreen", "Generated Questions: ${testReturn.test.questions}")
+                questions = testReturn.test.questions
                 isLoading = false
             } catch (e: Exception) {
                 Log.e("MCQTestScreen", "Error generating test: ${e.message}")
@@ -49,6 +51,17 @@ fun MCQTestScreen(
             }
         }
     }
+
+    fun calculateScore(): Int {
+        var calculatedScore = 0
+        selectedAnswers.forEach { (index, selectedOption) ->
+            if (selectedOption == questions[index].correct_answer) {
+                calculatedScore += 1  // Increment score for correct answer
+            }
+        }
+        return calculatedScore
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -110,9 +123,11 @@ fun MCQTestScreen(
                                                 .padding(vertical = 4.dp)
                                         ) {
                                             RadioButton(
-                                                selected = selectedAnswers[index] == option,
+                                                selected = (selectedAnswers[index] == option),
                                                 onClick = {
-                                                    selectedAnswers[index] = option
+                                                    selectedAnswers = selectedAnswers.toMutableMap().apply {
+                                                        this[index] = option
+                                                    }
                                                 },
                                                 colors = RadioButtonDefaults.colors(selectedColor = Color.White)
                                             )
@@ -125,12 +140,12 @@ fun MCQTestScreen(
                         }
                         Button(
                             onClick = {
+                                score = calculateScore()
+                                val numQuestions = questions.size
                                 coroutineScope.launch {
                                     try {
-                                        val response = apiInstance.submitTest(testId)
-                                        val score = response["score"] ?: "0"
-
-                                        navController.navigate("test_result/$score")
+//                                        val response = apiInstance.submitTest(testId)
+                                        navController.navigate("test_result/$chatId/$score/$numQuestions")
                                     } catch (e: Exception) {
                                         Log.e("MCQTestScreen", "Error submitting test: ${e.message}")
                                     }
@@ -139,7 +154,7 @@ fun MCQTestScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 16.dp),
-                            enabled = selectedAnswers.size == 5
+                            enabled = selectedAnswers.size == questions.size
                         ) {
                             Text("Submit")
                         }
