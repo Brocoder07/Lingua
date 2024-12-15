@@ -38,7 +38,6 @@ fun ChatDetailScreen(
     LaunchedEffect(messageHistory) {
         authViewModel.userData.value?.let { chatViewModel.getMessageData(chatId, it.user_id) }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,16 +76,10 @@ fun ChatDetailScreen(
                         MessageItem(message)
                     }
                 }
-
-                // Floating Action Button for Test
+                //Floating Action Button for Test
                 FloatingActionButton(
                     onClick = {
-                        val questions = listOf("Sample Question?")
-                        val answers = listOf(listOf("Option A", "Option B", "Option C", "Option D"))
-                        val questionsJson = Uri.encode(Gson().toJson(questions))
-                        val answersJson = Uri.encode(Gson().toJson(answers))
-
-                        navController.navigate("mcq_test/$questionsJson/$answersJson")
+                        navController.navigate("mcq_test/${chatId}")
                     },
                     modifier = Modifier
                         .align(Alignment.End)
@@ -94,8 +87,7 @@ fun ChatDetailScreen(
                 ) {
                     Text("Test")
                 }
-
-                // Message input and send button
+                //Message input and send button
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -123,7 +115,6 @@ fun ChatDetailScreen(
         }
     }
 }
-
 @Composable
 fun MessageItem(message: Message) {
     val isUserMessage = message.role == "user"
