@@ -21,9 +21,8 @@ Secure login and registration system with Firebase Authentication, allowing user
 Powered by FastAPI and MongoDB, the backend ensures real-time responses, secure data handling, and efficient performance.
 
 🛠️ Tech Stack
-
-Frontend: Jetpack Compose (Android)
-Backend: FastAPI hosted on Render
-Database: MongoDB
-Authentication: Firebase Authentication
-AI Integration: Gemini for language teaching and conversational AI
+1) Frontend: Jetpack Compose (Android)
+2) Backend: FastAPI hosted on Render
+3) Database: MongoDB
+4) Authentication: Firebase Authentication
+5) AI Integration: Gemini for language teaching and conversational AI
